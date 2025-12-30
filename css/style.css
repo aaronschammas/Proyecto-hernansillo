@@ -1,0 +1,24 @@
+body 
+    saludo{
+        text-align: center;
+        color: #333; /* Cambia el color del texto según tus preferencias*/
+
+    }
+    columnas{
+    
+      display: flex;
+    }
+
+    .columna {
+      flex: 1;
+      padding: 20px;
+      border: 0px solid #ccc;
+    }
+    .input-fecha{
+        text-align: center;
+    }
+    .input-turno{
+        text-align: center;
+    }
+  
+  

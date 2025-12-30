@@ -1,0 +1,159 @@
+
+#saludo {
+    color: #0c2bb4;
+    padding: 10px; 
+    margin: 5px;
+    margin-left: 10px;
+}
+
+columnas {
+    display: flex;
+    width: 70%;
+}
+
+
+.columna1 {
+    width: 35%;
+    box-sizing: border-box; 
+    padding: 10px; 
+    margin-left: 100px;
+    margin-right: 0px;
+}
+
+label {
+    font-size: 16px;
+    width: 180px;
+    height: 30px;
+    padding: 5px;
+    margin: 5px;
+    line-height: 30px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+label1 {
+    font-size: 16px;
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    padding-top: 0px;
+    padding: 5px;
+    margin: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
+
+select {
+    font-size: 16px;
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    padding: 5px;
+    margin: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
+.columna2 {
+    width: 35%;
+    box-sizing: border-box;
+    padding: 10px;
+
+}
+.input-fecha {
+    text-align: center;
+}
+inputfecha {
+    font-size: 16px;
+    width: 100px;
+    height: 30px;
+    padding: 5px;
+    margin: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+input {
+    font-size: 16px;
+    width: 200px;
+    height: 30px;
+    padding: 5px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+textarea {
+    font-size: 16px;
+    width: 200px;
+    height: 90px;
+    padding: 5px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+
+.columna3 {
+    width: 30%;
+    box-sizing: border-box; 
+    padding: 12px; 
+
+}
+.col3-container {
+    display: flex;
+    align-items: center; 
+    margin-bottom: 10px; 
+}
+
+.turno-container label1 {
+    margin-right: 10px; 
+}
+.input-turno {
+    text-align: center;
+}
+table {
+    width: 650px;
+    border: 1px solid black;
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+td{
+    border: 1px solid #ccc; /* Establecer un borde sólido de color gris claro para las celdas */
+    padding: 8px; /* Espacio interno de las celdas */
+    vertical-align: middle; /* Alineación vertical al centro */
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    width: 300px;
+    margin: 20% auto;
+    text-align: center;
+    border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
