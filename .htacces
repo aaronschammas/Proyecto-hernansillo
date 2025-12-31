@@ -1,0 +1,193 @@
+# ═══════════════════════════════════════════════════════════
+# CONFIGURACIÓN DE SEGURIDAD APACHE - MEGA MODA
+# ═══════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────
+# HEADERS DE SEGURIDAD
+# ─────────────────────────────────────────────────────────
+
+<IfModule mod_headers.c>
+    # Prevenir Clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # Prevenir MIME-type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Habilitar XSS Protection del navegador
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Content Security Policy (ajustar según necesidades)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none';"
+    
+    # HSTS - Solo descomentar si tienes HTTPS configurado
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Remover información del servidor
+    Header unset X-Powered-By
+    Header unset Server
+</IfModule>
+
+# ─────────────────────────────────────────────────────────
+# PROTEGER ARCHIVOS SENSIBLES
+# ─────────────────────────────────────────────────────────
+
+# Denegar acceso a archivos de configuración
+<FilesMatch "^(\.env|\.env\.example|config\.php|Security\.php|composer\.(json|lock)|package(-lock)?\.json)$">
+    Require all denied
+</FilesMatch>
+
+# Proteger logs
+<DirectoryMatch "logs">
+    Require all denied
+</DirectoryMatch>
+
+# Proteger archivos de Git
+<DirectoryMatch "\.git">
+    Require all denied
+</DirectoryMatch>
+
+# Proteger node_modules si existen
+<DirectoryMatch "node_modules">
+    Require all denied
+</DirectoryMatch>
+
+# ─────────────────────────────────────────────────────────
+# PHP SECURITY SETTINGS
+# ─────────────────────────────────────────────────────────
+
+<IfModule mod_php7.c>
+    # Ocultar versión de PHP
+    php_flag expose_php Off
+    
+    # Deshabilitar funciones peligrosas
+    php_value disable_functions "exec,passthru,shell_exec,system,proc_open,popen,curl_exec,curl_multi_exec,parse_ini_file,show_source"
+</IfModule>
+
+# ─────────────────────────────────────────────────────────
+# BLOQUEO DE USER AGENTS MALICIOSOS
+# ─────────────────────────────────────────────────────────
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Bloquear bots maliciosos conocidos
+    RewriteCond %{HTTP_USER_AGENT} (libwww-perl|wget|python|nikto|curl|scan|java|winhttp|HTTrack|clshttp|loader) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (%0A|%0D|%27|%3C|%3E|%00) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (;|<|>|'|"|\)|\(|%0A|%0D|%22|%27|%28|%3C|%3E|%00).*(libwww-perl|wget|python|nikto|curl|scan|java|winhttp|HTTrack|clshttp|loader) [NC]
+    RewriteRule .* - [F,L]
+    
+    # Bloquear peticiones con query strings sospechosas (SQL Injection)
+    RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=http:// [OR]
+    RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=(\.\.//?)+ [OR]
+    RewriteCond %{QUERY_STRING} [a-zA-Z0-9_]=/([a-z0-9_.]//?)+ [NC,OR]
+    RewriteCond %{QUERY_STRING} \=PHP[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12} [NC,OR]
+    RewriteCond %{QUERY_STRING} (\.\./|\.\.) [OR]
+    RewriteCond %{QUERY_STRING} ftp\: [NC,OR]
+    RewriteCond %{QUERY_STRING} http\: [NC,OR]
+    RewriteCond %{QUERY_STRING} https\: [NC,OR]
+    RewriteCond %{QUERY_STRING} \=\|w\| [NC,OR]
+    RewriteCond %{QUERY_STRING} ^(.*)/self/(.*)$ [NC,OR]
+    RewriteCond %{QUERY_STRING} ^(.*)cPath=http://(.*)$ [NC,OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*embed.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^e]*e)+mbed.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*object.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^o]*o)+bject.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\<|%3C).*iframe.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^i]*i)+frame.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} base64_encode.*\(.*\) [NC,OR]
+    RewriteCond %{QUERY_STRING} base64_(en|de)code[^(]*\([^)]*\) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} ^.*(\[|\]|\(|\)|<|>|ê|"|;|\?|\*|=$).* [NC,OR]
+    RewriteCond %{QUERY_STRING} (NULL|OUTFILE|LOAD_FILE) [OR]
+    RewriteCond %{QUERY_STRING} (\.{1,}/)+(motd|etc|bin) [NC,OR]
+    RewriteCond %{QUERY_STRING} (localhost|loopback|127\.0\.0\.1) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|>|'|%0A|%0D|%27|%3C|%3E|%00) [NC,OR]
+    RewriteCond %{QUERY_STRING} concat[^\(]*\( [NC,OR]
+    RewriteCond %{QUERY_STRING} union([^s]*s)+elect [NC,OR]
+    RewriteCond %{QUERY_STRING} union([^a]*a)+ll([^s]*s)+elect [NC,OR]
+    RewriteCond %{QUERY_STRING} (;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|drop|delete|update|cast|create|char|convert|alter|declare|order|script|set|md5|benchmark|encode) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# ─────────────────────────────────────────────────────────
+# FORZAR HTTPS (Descomentar solo si tienes certificado SSL)
+# ─────────────────────────────────────────────────────────
+
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+# ─────────────────────────────────────────────────────────
+# COMPRESIÓN GZIP
+# ─────────────────────────────────────────────────────────
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# ─────────────────────────────────────────────────────────
+# CACHE CONTROL
+# ─────────────────────────────────────────────────────────
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Imágenes
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    
+    # CSS y JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    
+    # Fuentes
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# ─────────────────────────────────────────────────────────
+# PREVENIR DIRECTORY LISTING
+# ─────────────────────────────────────────────────────────
+
+Options -Indexes
+
+# ─────────────────────────────────────────────────────────
+# CHARSET UTF-8
+# ─────────────────────────────────────────────────────────
+
+AddDefaultCharset UTF-8
+
+# ─────────────────────────────────────────────────────────
+# PÁGINAS DE ERROR PERSONALIZADAS
+# ─────────────────────────────────────────────────────────
+
+ErrorDocument 403 /error_pages/403.html
+ErrorDocument 404 /error_pages/404.html
+ErrorDocument 500 /error_pages/500.html
+
+# ─────────────────────────────────────────────────────────
+# LÍMITES DE PETICIONES (DoS Protection)
+# ─────────────────────────────────────────────────────────
+
+<IfModule mod_reqtimeout.c>
+    # Timeout para headers (20 segundos)
+    RequestReadTimeout header=20-40,MinRate=500
+    
+    # Timeout para body (30 segundos)
+    RequestReadTimeout body=20-40,MinRate=500
+</IfModule>

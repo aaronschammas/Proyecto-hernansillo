@@ -1,0 +1,148 @@
+# ═══════════════════════════════════════════════════════════
+# GITIGNORE - SISTEMA MEGA MODA
+# ═══════════════════════════════════════════════════════════
+# Archivos que NO deben commitearse a Git por seguridad
+
+# ─────────────────────────────────────────────────────────
+# ARCHIVOS DE CONFIGURACIÓN SENSIBLES
+# ─────────────────────────────────────────────────────────
+
+# Variables de entorno (contienen credenciales)
+.env
+.env.local
+.env.production
+
+# Archivo de configuración (si tiene credenciales hardcoded)
+config.php
+
+# ─────────────────────────────────────────────────────────
+# LOGS Y ARCHIVOS TEMPORALES
+# ─────────────────────────────────────────────────────────
+
+# Directorio de logs
+logs/
+*.log
+error_log
+error_log.txt
+error_log_*.txt
+
+# Archivos temporales de PHP
+*.tmp
+*.temp
+*.cache
+
+# ─────────────────────────────────────────────────────────
+# BACKUPS Y ARCHIVOS SENSIBLES
+# ─────────────────────────────────────────────────────────
+
+# Backups de base de datos
+*.sql
+*.sql.gz
+*.dump
+backup/
+backups/
+
+# Archivos de Excel/CSV con datos sensibles
+*.xlsx
+*.xls
+*.csv
+
+# ─────────────────────────────────────────────────────────
+# DEPENDENCIAS Y VENDOR
+# ─────────────────────────────────────────────────────────
+
+# Composer
+vendor/
+composer.lock
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ─────────────────────────────────────────────────────────
+# ARCHIVOS DEL SISTEMA OPERATIVO
+# ─────────────────────────────────────────────────────────
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ─────────────────────────────────────────────────────────
+# ARCHIVOS DE IDEs
+# ─────────────────────────────────────────────────────────
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# PHPStorm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# NetBeans
+nbproject/
+nbbuild/
+dist/
+nbdist/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ─────────────────────────────────────────────────────────
+# ARCHIVOS DE SESIÓN Y CACHÉ
+# ─────────────────────────────────────────────────────────
+
+# Archivos de sesión de PHP
+sessions/
+tmp/
+
+# Cache
+cache/
+*.cache
+
+# ─────────────────────────────────────────────────────────
+# CERTIFICADOS Y CLAVES
+# ─────────────────────────────────────────────────────────
+
+# Certificados SSL
+*.pem
+*.key
+*.crt
+*.csr
+*.cer
+*.p12
+*.pfx
+
+# Claves SSH
+id_rsa
+id_rsa.pub
+*.ppk
+
+# ─────────────────────────────────────────────────────────
+# ARCHIVOS DE TESTING
+# ─────────────────────────────────────────────────────────
+
+# PHPUnit
+phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# Testing
+tests/_output/
+tests/_support/_generated/
